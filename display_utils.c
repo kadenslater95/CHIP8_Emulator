@@ -3,11 +3,18 @@
 #include "file_utils.h"
 
 
+// X and Y go from -1 to 1 (so lengths of 2.0f) in OpenGL and the dimensions of Chip 8 screen are 64x32
 #define PIXEL_W 2.0f/64.0f
 #define PIXEL_H 2.0f/32.0f
 
+// The point size I will give to OpenGL
+#define POINT_S 10.0f
 
-int load_shader_from_file(unsigned int, char*);
+// This is for a block of bytes that will be held as a "display buffer" which I will iterate through and use to build up the Vertex Buffer
+#define DISPLAY_SIZE 64*32
+
+
+unsigned char displayBuffer[DISPLAY_SIZE];
 
 unsigned int vertexShader;
 unsigned int fragmentShader;
@@ -32,6 +39,98 @@ unsigned int indices[] = {
 };
 
 
+void clear_display_buffer()
+{
+  for(int i = 0; i < DISPLAY_SIZE; i++) {
+    displayBuffer[i] = 0;
+  }
+}
+
+
+/**
+ * Read the Shader Source Code from the given file path and add it to the given shader
+ * 
+ * @param shader unsigned int, the uint given by glCreateShader
+ * @param filePath char*, the shader source file path
+ * 
+ * @return int, return 1 if error is caught and 0 otherwise
+*/
+int load_shader_from_file(unsigned int shader, char *filePath) {
+  char* fileContent;
+  unsigned int fileLength;
+
+  read_file(filePath, &fileContent, &fileLength);
+
+  if(!fileContent) {
+    printf("Failed to read file!\n");
+    return 1;
+  }
+
+  glShaderSource(shader, 1, &fileContent, NULL);
+
+  free(fileContent);
+
+  GLenum glError = glGetError();
+  if(glError != GL_NO_ERROR) {
+    printf("Failed to compile shader! GL ERROR: %s\n", gluErrorString(glError));
+    return FALSE;
+  }
+
+  return 0;
+}
+
+
+void build_shader_program() {
+  int  success;
+  char infoLog[512];
+
+
+  vertexShader = glCreateShader(GL_VERTEX_SHADER);
+  load_shader_from_file(vertexShader, "./shader.vert");
+  glCompileShader(vertexShader);
+  
+  glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+  if(!success)
+  {
+    glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+    printf("ERROR::SHADER::VERTEX::COMPILATION_FAILED\n%s\n", infoLog);
+    return;
+  }
+
+
+  fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+  load_shader_from_file(fragmentShader, "./shader.frag");
+  glCompileShader(fragmentShader);
+  
+  glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
+  if(!success)
+  {
+    glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+    printf("ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n%s\n", infoLog);
+    return;
+  }
+
+
+  shaderProgram = glCreateProgram();
+
+  glAttachShader(shaderProgram, vertexShader);
+  glAttachShader(shaderProgram, fragmentShader);
+  glLinkProgram(shaderProgram);
+
+
+  glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
+  if(!success) {
+      glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
+      printf("ERROR::SHADER::PROGAM::LINKAGE_FAILED\n%s\n", infoLog);
+      return;
+  }
+
+
+  glDeleteShader(vertexShader);
+  glDeleteShader(fragmentShader);
+}
+
+
 void on_realize(GtkGLArea *area)
 {
   // We need to make the context current if we want to
@@ -53,48 +152,11 @@ void on_realize(GtkGLArea *area)
 
   printf("Using OpenGL Version: %s\n", glGetString(GL_VERSION));
   
-  int  success;
-  char infoLog[512];
-
-  vertexShader = glCreateShader(GL_VERTEX_SHADER);
-  load_shader_from_file(vertexShader, "./shader.vert");
-  glCompileShader(vertexShader);
   
-  glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-  if(!success)
-  {
-    glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-    printf("ERROR::SHADER::VERTEX::COMPILATION_FAILED\n%s\n", infoLog);
-    return;
-  }
+  clear_display_buffer();
 
-  fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-  load_shader_from_file(fragmentShader, "./shader.frag");
-  glCompileShader(fragmentShader);
-  
-  glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-  if(!success)
-  {
-    glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
-    printf("ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n%s\n", infoLog);
-    return;
-  }
 
-  shaderProgram = glCreateProgram();
-
-  glAttachShader(shaderProgram, vertexShader);
-  glAttachShader(shaderProgram, fragmentShader);
-  glLinkProgram(shaderProgram);
-
-  glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-  if(!success) {
-      glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
-      printf("ERROR::SHADER::PROGAM::LINKAGE_FAILED\n%s\n", infoLog);
-      return;
-  }
-
-  glDeleteShader(vertexShader);
-  glDeleteShader(fragmentShader); 
+  build_shader_program(); 
 
 
   glGenVertexArrays(1, &VAO);
@@ -117,7 +179,7 @@ void on_realize(GtkGLArea *area)
 
   glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
   
-  glPointSize(10.0f);
+  glPointSize(POINT_S);
 
 
   GLenum glError = glGetError();
