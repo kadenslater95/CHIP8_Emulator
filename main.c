@@ -15,7 +15,7 @@ activate (GtkApplication *app,
   GtkWidget *gl_area;
 
   window = gtk_application_window_new (app);
-  gtk_window_set_title (GTK_WINDOW (window), "GTK GL Template");
+  gtk_window_set_title (GTK_WINDOW (window), "CHIP8");
   gtk_window_set_default_size (GTK_WINDOW (window), 640, 320);
 
   gl_area = gtk_gl_area_new();
@@ -43,37 +43,3 @@ main (int    argc,
 
   return status;
 }
-
-
-/**
- * Read the Shader Source Code from the given file path and add it to the given shader
- * 
- * @param shader unsigned int, the uint given by glCreateShader
- * @param filePath char*, the shader source file path
- * 
- * @return int, return 1 if error is caught and 0 otherwise
-*/
-int load_shader_from_file(unsigned int shader, char *filePath) {
-  char* fileContent;
-  unsigned int fileLength;
-
-  read_file(filePath, &fileContent, &fileLength);
-
-  if(!fileContent) {
-    printf("Failed to read file!\n");
-    return 1;
-  }
-
-  glShaderSource(shader, 1, &fileContent, NULL);
-
-  free(fileContent);
-
-  GLenum glError = glGetError();
-  if(glError != GL_NO_ERROR) {
-    printf("Failed to compile shader! GL ERROR: %s\n", gluErrorString(glError));
-    return FALSE;
-  }
-
-  return 0;
-}
-
