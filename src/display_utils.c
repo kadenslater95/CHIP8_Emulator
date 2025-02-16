@@ -1,6 +1,11 @@
 
-#include "display_utils.h"
-#include "file_utils.h"
+/**
+ * @copyright  Copyright (C) 2025 Kaden Slater. All Rights Reserved.
+ * @license    GNU General Public License version 2 or later; see LICENSE.txt
+ */
+
+#include "include/display_utils.h"
+#include "include/file_utils.h"
 
 
 // X and Y go from -1 to 1 (so lengths of 2.0f) in OpenGL and the dimensions
@@ -79,7 +84,7 @@ int load_shader_from_file(unsigned int shader, char *filePath) {
 
   read_file(filePath, &fileContent, &fileLength);
 
-  if(!fileContent) {
+  if (!fileContent) {
     printf("Failed to read file!\n");
     return 1;
   }
@@ -89,7 +94,7 @@ int load_shader_from_file(unsigned int shader, char *filePath) {
   free(fileContent);
 
   GLenum glError = glGetError();
-  if(glError != GL_NO_ERROR) {
+  if (glError != GL_NO_ERROR) {
     printf("Failed to compile shader! GL ERROR: %s\n", gluErrorString(glError));
     return FALSE;
   }
@@ -106,10 +111,9 @@ void build_shader_program() {
   vertexShader = glCreateShader(GL_VERTEX_SHADER);
   load_shader_from_file(vertexShader, "./shader.vert");
   glCompileShader(vertexShader);
-  
+
   glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-  if(!success)
-  {
+  if (!success) {
     glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
     printf("ERROR::SHADER::VERTEX::COMPILATION_FAILED\n%s\n", infoLog);
     return;
@@ -119,10 +123,9 @@ void build_shader_program() {
   fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
   load_shader_from_file(fragmentShader, "./shader.frag");
   glCompileShader(fragmentShader);
-  
+
   glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &success);
-  if(!success)
-  {
+  if (!success) {
     glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
     printf("ERROR::SHADER::FRAGMENT::COMPILATION_FAILED\n%s\n", infoLog);
     return;
@@ -137,7 +140,7 @@ void build_shader_program() {
 
 
   glGetProgramiv(shaderProgram, GL_LINK_STATUS, &success);
-  if(!success) {
+  if (!success) {
       glGetProgramInfoLog(shaderProgram, 512, NULL, infoLog);
       printf("ERROR::SHADER::PROGAM::LINKAGE_FAILED\n%s\n", infoLog);
       return;
@@ -149,15 +152,13 @@ void build_shader_program() {
 }
 
 
-void on_realize(GtkGLArea *area)
-{
+void on_realize(GtkGLArea *area) {
   // We need to make the context current if we want to
   // call GL API
-  gtk_gl_area_make_current (area);
+  gtk_gl_area_make_current(area);
 
   GError *gl_area_error = gtk_gl_area_get_error(area);
-  if(gl_area_error != NULL)
-  {
+  if (gl_area_error != NULL) {
     printf("Failed to create gtk_gl_area: %s\n", gl_area_error->message);
     g_error_free(gl_area_error);
     return;
@@ -169,12 +170,11 @@ void on_realize(GtkGLArea *area)
   printf("Gtk GL Context Version: %d.%d\n", major, minor);
 
   printf("Using OpenGL Version: %s\n", glGetString(GL_VERSION));
-  
-  
+
+
   clear_display_buffer();
 
-
-  build_shader_program(); 
+  build_shader_program();
 
 
   glGenVertexArrays(1, &VAO);
@@ -187,7 +187,11 @@ void on_realize(GtkGLArea *area)
   glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
 
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-  glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(indices), indices, GL_STATIC_DRAW);
+  glBufferData(
+    GL_ELEMENT_ARRAY_BUFFER,
+    sizeof(indices),
+    indices,
+    GL_STATIC_DRAW);
 
   glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 2 * sizeof(float), (void*)0);
   glEnableVertexAttribArray(0);
@@ -196,12 +200,12 @@ void on_realize(GtkGLArea *area)
   glBindVertexArray(0);
 
   glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-  
+
   glPointSize(POINT_S);
 
 
   GLenum glError = glGetError();
-  if(glError != GL_NO_ERROR) {
+  if (glError != GL_NO_ERROR) {
     printf("GL ERROR: %s\n", gluErrorString(glError));
     return;
   }
@@ -209,8 +213,7 @@ void on_realize(GtkGLArea *area)
 
 
 
-gboolean render(GtkGLArea *area, GdkGLContext *context)
-{
+gboolean render(GtkGLArea *area, GdkGLContext *context) {
   // inside this function it's safe to use GL; the given
   // GdkGLContext has been made current to the drawable
   // surface used by the `GtkGLArea` and the viewport has
@@ -228,11 +231,11 @@ gboolean render(GtkGLArea *area, GdkGLContext *context)
   glFlush();
 
   GLenum glError = glGetError();
-  if(glError != GL_NO_ERROR) {
+  if (glError != GL_NO_ERROR) {
     printf("GL ERROR: %s\n", gluErrorString(glError));
     return FALSE;
   }
-  
+
   // we completed our drawing; the draw commands will be
   // flushed at the end of the signal emission chain, and
   // the buffers will be drawn on the window
