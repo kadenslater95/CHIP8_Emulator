@@ -23,8 +23,11 @@ sudo apt-get install libglu1-mesa libglu1-mesa-dev
 I found that package using the `apt-file` package to search for  `glu.h`.
 
 
-#### Linting
-I have the cpplint vscode extension installed. Note that this is written in C but most of the styling guidelines are still applicatble. Anything that follows the [Google Style Guide](https://google.github.io/styleguide/cppguide.html) will be consistent with what is in this project.
+#### cpplint
+Note that this is written in C but most of the styling guidelines are still applicatble. Anything that follows the [Google Style Guide](https://google.github.io/styleguide/cppguide.html) will be consistent with what is in this project.
+```
+sudo apt-get install cpplint
+```
 
 
 ### Build
@@ -36,4 +39,10 @@ make
 ### Run
 ```
 ./main
+```
+
+
+### Lint
+```
+cpplint --recursive src
 ```
