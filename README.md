@@ -44,5 +44,5 @@ make
 
 ### Lint
 ```
-cpplint --recursive src
+cpplint --recursive src include
 ```

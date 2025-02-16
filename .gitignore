@@ -1,4 +1,4 @@
 
 main
 
-libchip8_utils.a
+*.a
