@@ -4,7 +4,7 @@
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-#include "include/file_utils.h"
+#include "file_utils.h"
 
 
 #define BLOCKLENGTH 1024
@@ -72,9 +72,9 @@ void read_file(const char *filePath, char **content, unsigned int *length) {
 
     if (offset > 0) {
       // offset - 1 to overwrite the previous \0
-      snprintf(&content[0][offset - 1], sizeof(block), block);
+      snprintf(&content[0][offset - 1], sizeof(block), "%s", block);
     } else {
-      snprintf(&content[0][offset], sizeof(block), block);
+      snprintf(&content[0][offset], sizeof(block), "%s", block);
     }
 
     // Add 1 to account for the null terminator added on
@@ -86,9 +86,9 @@ void read_file(const char *filePath, char **content, unsigned int *length) {
 
     if (offset > 0) {
       // offset - 1 to overwrite the previous \0
-      snprintf(&content[0][offset - 1], sizeof(block), block);
+      snprintf(&content[0][offset - 1], sizeof(block), "%s", block);
     } else {
-      snprintf(&content[0][offset], sizeof(block), block);
+      snprintf(&content[0][offset], sizeof(block), "%s", block);
     }
   }
 

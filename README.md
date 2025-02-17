@@ -6,8 +6,7 @@ This is a CHIP8 Emulator written in C. It uses GTK to make a desktop application
 #### Note: This was developed on Ubuntu. So long as you can install gtk4, etc. you should be able to build from src for your platform. The instructions I provide will be using the `apt` package manager for examples.
 
 
-### Prequisites
-#### GTK4
+### GTK4
 On a debian linux distro you can install with apt
 ```
 sudo apt-get install libgtk-4-1 libgtk-4-1-bin libgtk-4-1-dev
@@ -15,7 +14,7 @@ sudo apt-get install libgtk-4-1 libgtk-4-1-bin libgtk-4-1-dev
 This provides GTK4 and the cflags via pkg-config which gets used in the Makefile.
 
 
-#### glu
+### glu
 On Ubuntu 24.04 (at time of writing) it seems that the the `glu.h` file is missing from the default OpenGL install, so I had to install this to have /usr/include/GL/glu.h present.
 ```
 sudo apt-get install libglu1-mesa libglu1-mesa-dev
@@ -23,7 +22,21 @@ sudo apt-get install libglu1-mesa libglu1-mesa-dev
 I found that package using the `apt-file` package to search for  `glu.h`.
 
 
-#### cpplint
+### GLEW
+With apt I installed 2 packages
+```
+sudo apt-get install libglew-dev libglew2.2
+```
+
+
+### Cmake
+With apt I installed with
+```
+sudo apt-get install cmake
+```
+
+
+### cpplint
 Note that this is written in C but most of the styling guidelines are still applicatble. Anything that follows the [Google Style Guide](https://google.github.io/styleguide/cppguide.html) will be consistent with what is in this project.
 ```
 sudo apt-get install cpplint
@@ -31,8 +44,11 @@ sudo apt-get install cpplint
 
 
 ### Build
+Using CMake from the root directory, run these commands sequentially:
 ```
-make
+cmake -S . -B build
+
+cmake --build build
 ```
 
 

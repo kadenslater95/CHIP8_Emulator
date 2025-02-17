@@ -6,14 +6,13 @@
 
 #include <gtk/gtk.h>
 
-#include "include/display_utils.h"
+#include "display_utils.h"
 
 
 #define MEMORY_SIZE 4096
 
 
-static void
-activate(GtkApplication *app, gpointer user_data) {
+static void activate(GtkApplication *app, gpointer user_data) {
   GtkWidget *window;
   GtkWidget *gl_area;
 
