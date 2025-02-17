@@ -54,7 +54,7 @@ cmake --build build
 
 ### Run
 ```
-./main
+build/main
 ```
 
 
