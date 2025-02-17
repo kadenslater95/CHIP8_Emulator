@@ -4,8 +4,8 @@
  * @license    GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-#include "include/display_utils.h"
-#include "include/file_utils.h"
+#include "display_utils.h"
+#include "file_utils.h"
 
 
 // X and Y go from -1 to 1 (so lengths of 2.0f) in OpenGL and the dimensions
@@ -89,7 +89,7 @@ int load_shader_from_file(unsigned int shader, char *filePath) {
     return 1;
   }
 
-  glShaderSource(shader, 1, &fileContent, NULL);
+  glShaderSource(shader, 1, (const GLchar * const*)&fileContent, NULL);
 
   free(fileContent);
 
@@ -163,6 +163,14 @@ void on_realize(GtkGLArea *area) {
     g_error_free(gl_area_error);
     return;
   }
+
+
+  GLenum err = glewInit();
+  if (GLEW_OK != err) {
+    // Problem: glewInit failed, something is seriously wrong
+    fprintf(stderr, "GLEW Initialization Error: %s\n", glewGetErrorString(err));
+  }
+
 
   GdkGLContext *context = gtk_gl_area_get_context(area);
   int major, minor;
