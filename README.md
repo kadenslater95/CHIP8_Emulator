@@ -2,8 +2,9 @@
 This is a CHIP8 Emulator written in C. It uses GTK to make a desktop application, and uses modern OpenGL to implement the CHIP8 display.
 
 
-## Setup
+## Prerequisites
 #### Note: This was developed on Ubuntu. So long as you can install gtk4, etc. you should be able to build from src for your platform. The instructions I provide will be using the `apt` package manager for examples.
+#### Also, you might have to update some of the include paths in `.vscode/c_cpp_properties.json` to make some red squiggles go away if you are on a different platform.
 
 
 ### GTK4
@@ -43,7 +44,7 @@ sudo apt-get install cpplint
 ```
 
 
-### Build
+## Build
 Using CMake from the root directory, run these commands sequentially:
 ```
 cmake -S . -B build
@@ -52,13 +53,19 @@ cmake --build build
 ```
 
 
-### Run
+## Run
 ```
-build/main
+build/src/main
 ```
 
 
-### Lint
+## Test
+```
+build/test/chip8_tests
+```
+
+
+## Lint
 ```
 cpplint --recursive src include
 ```

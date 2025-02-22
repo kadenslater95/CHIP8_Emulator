@@ -14,7 +14,17 @@
 #define INCLUDE_FILE_UTILS_H_
 
 
+// Make this C library callable from C++
+#ifdef __cplusplus
+extern "C" {
+#endif  // __cplusplus
+
+
 void read_file(const char *, char **, unsigned int *);
 
+
+#ifdef __cplusplus
+}
+#endif  // __cplusplus
 
 #endif  // INCLUDE_FILE_UTILS_H_
