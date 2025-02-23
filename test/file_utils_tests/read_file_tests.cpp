@@ -12,6 +12,11 @@
   /*
     Tests that when there isn't any tail yet it creates one
   */
-TEST(StubTest, AssertsTrue) {
+TEST(ReadFileTest, BadFilePathFails) {
+  char* fileContent;
+  unsigned int fileLength;
+
+  read_file("path/to/nonexistent/file", &fileContent, &fileLength);
+
   EXPECT_EQ(1, 1);
 }

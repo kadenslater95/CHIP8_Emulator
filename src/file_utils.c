@@ -11,11 +11,17 @@
 
 
 /**
+ * Get block 
+ */
+
+
+
+/**
  * Read the file from the given file path and malloc an array for its content which the user of the function
  * will then be responsible for freeing
  * 
  * @param filePath char*, the path to the file to read
- * @param content char*, a pointer placeholder that will be pointed to a malloced array of file content
+ * @param content char**, a pointer placeholder that will be pointed to a malloced array of file content
  * @param length int*, a pointer placehold that will be set to have the size of the file in bytes
 */
 void read_file(const char *filePath, char **content, unsigned int *length) {
